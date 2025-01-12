@@ -25,14 +25,14 @@ func main() {
 		switch msg.Type {
 		case "ping":
 			// 收到ping就回pong
-			log.Printf("Received ping from %s", msg.From)
+			log.Printf("[PongPlugin]Received ping from %s", msg.From)
 			return p.SendMessage(msg.From, "pong", []byte("pong"))
 		
 		case "add":
 			// 处理加法请求
 			var req AddRequest
 			if err := json.Unmarshal(msg.Payload, &req); err != nil {
-				log.Printf("Failed to unmarshal add request: %v", err)
+				log.Printf("[PongPlugin]Failed to unmarshal add request: %v", err)
 				return err
 			}
 			
@@ -47,7 +47,7 @@ func main() {
 				return err
 			}
 			
-			log.Printf("Calculated %d + %d = %d", req.A, req.B, resp.Result)
+			log.Printf("[PongPlugin]Calculated %d + %d = %d", req.A, req.B, resp.Result)
 			return p.SendMessage(msg.From, "add_response", payload)
 		}
 		return nil
@@ -55,7 +55,7 @@ func main() {
 	
 	// 启动插件
 	if err := p.Start(); err != nil {
-		log.Fatalf("Failed to start plugin: %v", err)
+		log.Fatalf("[PongPlugin]Failed to start plugin: %v", err)
 	}
-	
+	select {}
 }

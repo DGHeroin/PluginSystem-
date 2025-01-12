@@ -31,13 +31,6 @@ func (p *BasePlugin) Start() error {
 		return fmt.Errorf("MASTER_ADDR environment variable not set")
 	}
 	
-	// 启动本地监听
-	listener, err := net.Listen("tcp", "127.0.0.1:0")
-	if err != nil {
-		return fmt.Errorf("failed to start listener: %v", err)
-	}
-	p.Port = listener.Addr().(*net.TCPAddr).Port
-	
 	// 连接主程序
 	conn, err := net.Dial("tcp", masterAddr)
 	if err != nil {
@@ -50,43 +43,33 @@ func (p *BasePlugin) Start() error {
 	if err := encoder.Encode(protocol.RegisterMessage{
 		Name:    p.Name,
 		Version: p.Version,
-		Port:    p.Port,
 	}); err != nil {
 		return fmt.Errorf("failed to send register message: %v", err)
 	}
 	
-	log.Printf("Plugin %s started on port %d", p.Name, p.Port)
+	log.Printf("[Plugin] %s Plugin start ", p.Name)
 	
 	// 启动消息处理
-	go p.handleIncomingMessages(listener)
+	go p.handleConnection(conn)
 	
 	return nil
-}
-
-func (p *BasePlugin) handleIncomingMessages(listener net.Listener) {
-	for {
-		conn, err := listener.Accept()
-		if err != nil {
-			log.Printf("Accept error: %v", err)
-			continue
-		}
-		go p.handleConnection(conn)
-	}
 }
 
 func (p *BasePlugin) handleConnection(conn net.Conn) {
 	defer conn.Close()
 	
 	decoder := json.NewDecoder(conn)
-	var msg protocol.Message
-	if err := decoder.Decode(&msg); err != nil {
-		log.Printf("Failed to decode message: %v", err)
-		return
-	}
-	
-	if p.handler != nil {
-		if err := p.handler(&msg); err != nil {
-			log.Printf("Failed to handle message: %v", err)
+	for {
+		var msg protocol.Message
+		if err := decoder.Decode(&msg); err != nil {
+			log.Printf("Failed to decode message: %v", err)
+			return
+		}
+		
+		if p.handler != nil {
+			if err := p.handler(&msg); err != nil {
+				log.Printf("Failed to handle message: %v", err)
+			}
 		}
 	}
 }

@@ -16,14 +16,14 @@ func main() {
 			Name:        "PingPlugin",
 			Version:     "1.0.0",
 			Conn:        nil,
-			ExecutePath: "./build/plugins/plugin1",
+			ExecutePath: "./plugins/plugin1",
 		})
 		
 		go master.StartPlugin(&PluginSystem.PluginInfo{
 			Name:        "PongPlugin",
 			Version:     "1.0.0",
 			Conn:        nil,
-			ExecutePath: "./build/plugins/plugin2",
+			ExecutePath: "./plugins/plugin2",
 		})
 	}()
 	

@@ -95,7 +95,6 @@ func (m *Master) handlePluginMessages(plugin *PluginInfo, decoder *json.Decoder)
 			log.Printf("Failed to decode message from %s: %v", plugin.Name, err)
 			return
 		}
-		log.Printf("Received message from %s: %+v", plugin.Name, msg)
 		// 处理或转发消息
 		m.forwardMessage(&msg)
 	}

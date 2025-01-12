@@ -4,7 +4,6 @@ package protocol
 type RegisterMessage struct {
 	Name    string `json:"name"`    // 插件名称
 	Version string `json:"version"` // 插件版本
-	Port    int    `json:"port"`    // 插件监听端口
 }
 
 // Message 插件间通信的消息
