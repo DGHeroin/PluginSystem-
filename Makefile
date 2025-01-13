@@ -2,14 +2,21 @@
 GO := go
 GOFLAGS := -trimpath
 
+# 检测操作系统并设置可执行文件扩展名
+ifeq ($(OS),Windows_NT)
+    EXE_EXT := .exe
+else
+    EXE_EXT :=
+endif
+
 # 输出目录
 BUILD_DIR := build
 PLUGINS_DIR := $(BUILD_DIR)/plugins
 
 # 目标文件
-MASTER := $(BUILD_DIR)/master.exe
-PLUGIN1 := $(PLUGINS_DIR)/plugin1.exe
-PLUGIN2 := $(PLUGINS_DIR)/plugin2.exe
+MASTER := $(BUILD_DIR)/master$(EXE_EXT)
+PLUGIN1 := $(PLUGINS_DIR)/plugin1$(EXE_EXT)
+PLUGIN2 := $(PLUGINS_DIR)/plugin2$(EXE_EXT)
 
 # 源文件目录
 CMD_DIR := cmd
